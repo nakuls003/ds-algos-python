@@ -2,13 +2,13 @@ class EmptyException(Exception):
     pass
 
 
-class ArrayQueue:
-    """A queue implementation using an underlying list circularly"""
+class ArrayDeque:
+    """A deque implementation using an underlying list circularly"""
 
     DEFAULT_CAPACITY = 10
 
     def __init__(self):
-        self._data = [None]*ArrayQueue.DEFAULT_CAPACITY
+        self._data = [None]*ArrayDeque.DEFAULT_CAPACITY
         self._size = 0
         self._front = 0
 
@@ -23,7 +23,12 @@ class ArrayQueue:
             raise EmptyException("Queue is empty!")
         return self._data[self._front]
 
-    def dequeue(self):
+    def back(self):
+        if self.is_empty():
+            raise EmptyException("Queue is empty!")
+        return self._data[(self._front + self._size - 1) % len(self._data)]
+
+    def delete_front(self):
         if self.is_empty():
             raise EmptyException("Queue is empty!")
         answer = self._data[self._front]
@@ -34,7 +39,25 @@ class ArrayQueue:
             self._resize(len(self._data)//2)
         return answer
 
-    def enqueue(self, e):
+    def delete_back(self):
+        if self.is_empty():
+            raise EmptyException("Queue is empty!")
+        last_index = (self._front + self._size - 1) % len(self._data)
+        answer = self._data[last_index]
+        self._data[last_index] = None
+        self._size -= 1
+        if self._size < len(self._data)//4:
+            self._resize(len(self._data)//2)
+        return answer
+
+    def add_front(self, e):
+        if self._size == len(self._data):
+            self._resize(2 * len(self._data))
+        self._front = (self._front - 1) % len(self._data)
+        self._data[self._front] = e
+        self._size += 1
+
+    def add_back(self, e):
         if self._size == len(self._data):
             self._resize(2 * len(self._data))
         available = (self._front + self._size) % len(self._data)
