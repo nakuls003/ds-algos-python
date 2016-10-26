@@ -60,3 +60,38 @@ class UnsortedPriorityQueue(PriorityQueueBase):
 
     def add(self, k, v):
         self._data.add_last(self._Item(k, v))
+
+
+class SortedPriorityQueue(PriorityQueueBase):
+    """
+    A priority queue class storing elements sorted according to priority
+    """
+
+    def __init__(self):
+        self._data = PositionalList()
+
+    def __len__(self):
+        return len(self._data)
+
+    def min(self):
+        if self.is_empty():
+            raise EmptyException('Priority queue is empty.')
+        p = self._data.first()
+        return (p.element()._key, p.element()._value)
+
+    def remove_min(self):
+        if self.is_empty():
+            raise EmptyException('Priority queue is empty.')
+        p = self._data.first()
+        item = self._data.delete(p)
+        return (item._key, item._value)
+
+    def add(self, k, v):
+        newest = self._Item(k, v)
+        walk = self._data.last()
+        while walk is not None and newest < walk.element():
+            walk = self._data.before(walk)
+        if walk is None:
+            self._data.add_first(newest)
+        else:
+            self._data.add_after(walk, newest)
