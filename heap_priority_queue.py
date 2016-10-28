@@ -42,8 +42,15 @@ class HeapPriorityQueue(PriorityQueueBase):
                 self._swap(small, j)
                 self._downheap(small)
 
-    def __init__(self):
-        self._data = []
+    def __init__(self, contents=()):
+        self._data = [self._Item(k, v) for k, v in contents]
+        if len(self._data) > 1:
+            self._heapify()
+
+    def _heapify(self):
+        first_nonleaf = self._parent(len(self)-1)
+        for i in range(first_nonleaf, -1, -1):
+            self._downheap(i)
 
     def __len__(self):
         return len(self._data)
